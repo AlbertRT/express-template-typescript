@@ -63,3 +63,18 @@ params list
 | url      | string                   | true     |
 | method   | HTTPMethod               | true     |
 | handdler | Middleware or Controller | false    |
+
+example code
+
+```
+const configs: AppConfigs = {
+port: 5050,
+baseUrl: "/api/v1",
+crossOriginResourceSharing: {
+using: true,
+},
+};
+
+const app = new Apps(configs);
+app.run();
+```
