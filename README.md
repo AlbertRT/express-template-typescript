@@ -24,12 +24,13 @@ npm run dev
 default port `5050`
 
 **Configs**
-|config| types | required |
-|--|--|--|
-| port | number | true |
-| baseUrl | string | true |
-| crossOriginResourceSharing | Cors | false |
-| middleware | MiddlewareFn | false |
+|config |types | required |
+|----------------------------|--------------|----------|
+| port | number |✅ |
+| baseUrl | string |✅ |
+| crossOriginResourceSharing | Cors |❌ |
+| middleware | MiddlewareFn |❌ |
+| routes | Route[] |❌ |
 
 **example**
 
@@ -40,6 +41,14 @@ const  configs:  AppConfigs  = {
 	crossOriginResourceSharing: {
 		using:  true,
 	},
+    routes: [
+		{
+			path: "/members/get",
+			method: "get",
+			controller: CMember.getAll,
+			middleware: [Middleware.auth, Middleware.checkRole],
+		},
+	],
 };
 ```
 
@@ -48,33 +57,48 @@ use this code to run the app.
 
 code example:
 run()
-**generateRouter(url, method, [handdler])**
-
-this code is use to create route.
-
-code example:
-
-    generateRouter("/hello-world", "get", someMiddleware, someController)
-
-params list
-
-| params   | type                     | required |
-| -------- | ------------------------ | -------- |
-| url      | string                   | true     |
-| method   | HTTPMethod               | true     |
-| handdler | Middleware or Controller | false    |
 
 example code
 
 ```
 const configs: AppConfigs = {
-port: 5050,
-baseUrl: "/api/v1",
-crossOriginResourceSharing: {
-using: true,
-},
+	port: 5050,
+	baseUrl: "/api/v1",
+	crossOriginResourceSharing: {
+		using: true,
+	},
+	routes: [
+		{
+			path: "/members/get",
+			method: "get",
+			controller: CMember.getAll,
+			middleware: [Middleware.auth, Middleware.checkRole],
+		},
+	],
 };
 
-const app = new Apps(configs);
+const app = new App(configs);
 app.run();
 ```
+
+**Route**
+
+To add a "route" you need to enter the following configuration:
+
+1. path
+2. method
+3. middleware()
+4. controller()
+
+_Route Config Type_
+
+| Name       | Type             | Required |
+| ---------- | ---------------- | -------- |
+| path       | string           | ✅       |
+| method     | HTTPMethod       | ✅       |
+| middleware | middlewareFn()[] | ❌       |
+| controller | controllerFn()   | ✅       |
+
+**Database**
+
+Default database is _PostgreSQL_ with prisma
