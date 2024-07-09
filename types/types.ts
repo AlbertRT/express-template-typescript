@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, RequestHandler } from "express";
 
 export type AppConfigs = {
 	port: number;
@@ -7,6 +7,7 @@ export type AppConfigs = {
 	middleware?: Array<
 		(req: Request, res: Response, next: NextFunction) => void
 	>;
+	routes?: Route[];
 };
 
 export type Cors = {
@@ -36,3 +37,17 @@ export type HTTPMethod =
 	| "patch"
 	| "trace"
 	| "connect";
+
+export type HTTPResponse = {
+	success: boolean;
+	isError: boolean;
+	[key: string | number]: any;
+};
+
+export type Controller = (req: Request, res: Response) => Promise<any>;
+export type Route = {
+	path: string;
+	method: HTTPMethod;
+	middleware?: RequestHandler[];
+	controller: Controller;
+};

@@ -1,15 +1,9 @@
-import { HanddlerFn, MiddlewareFn } from "./../types/types";
-import express, {
-	Application,
-	NextFunction,
-	Request,
-	Response,
-	Router,
-} from "express";
+import { HanddlerFn, MiddlewareFn, Route } from "../types/types";
+import express, { Application, Router } from "express";
 import { AppConfigs, CorsOptions, HTTPMethod } from "../types/types";
 import cors from "cors";
 
-export default class Apps {
+export default class App {
 	protected app: Application;
 	private appPort: number;
 	private cors: boolean = false;
@@ -35,9 +29,12 @@ export default class Apps {
 		if (config.middleware) {
 			this.middleware = config.middleware;
 		}
-
+		if (config.routes) {
+			this.initializeRoutes(config.routes);
+		}
 		this.app.use(this.router);
 	}
+
 	private middlewares(): void {
 		// default middleware function
 		this.app.use(express.json());
@@ -45,6 +42,17 @@ export default class Apps {
 		// user generated middleware
 		this.middleware.forEach((middleware) => {
 			this.app.use(middleware);
+		});
+	}
+
+	private initializeRoutes(routes: Route[]): void {
+		routes.forEach((route) => {
+			const { path, method, middleware = [], controller } = route;
+			this.router[method](
+				`${this.config.baseUrl}${path}`,
+				...middleware,
+				controller
+			);
 		});
 	}
 
